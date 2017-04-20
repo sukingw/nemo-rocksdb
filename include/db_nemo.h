@@ -2,12 +2,8 @@
 //  This source code is licensed under the BSD-style license found in the
 //  LICENSE file in the root directory of this source tree. An additional grant
 //  of patent rights can be found in the PATENTS file in the same directory.
-
 #pragma once
 #ifndef ROCKSDB_LITE
-
-#include <string>
-#include <vector>
 
 #include "rocksdb/utilities/stackable_db.h"
 #include "rocksdb/db.h"
@@ -43,6 +39,7 @@ class DBNemo: public StackableDB {
   virtual Status WriteWithKeyVersion(const WriteOptions& opts, WriteBatch* updates) = 0;
   virtual Status WriteWithOldKeyTTL(const WriteOptions& opts, WriteBatch* updates) = 0;
   virtual Status GetKeyTTL(const ReadOptions& options, const Slice& key, int32_t *ttl) = 0;
+  virtual void StopAllBackgroundWork(bool wait) = 0;
 
  protected:
   explicit DBNemo(DB* db) : StackableDB(db) {}
