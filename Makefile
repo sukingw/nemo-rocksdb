@@ -12,7 +12,8 @@ INCLUDE_PATH = -I./include \
 			   -I./rocksdb/include
 
 LIBRARY = libnemodb.a
-ROCKSDB = $(ROCKSDB_PATH)/librocksdb.a
+# ROCKSDB = $(ROCKSDB_PATH)/librocksdb.a
+ROCKSDB = $(ROCKSDB_PATH)/librocksdb.so
 
 .PHONY: all clean
 
@@ -27,7 +28,7 @@ all: $(ROCKSDB) $(LIBRARY)
 	@echo "Success, go, go, go..."
 
 $(ROCKSDB):
-	make -C $(ROCKSDB_PATH) static_lib
+	make -C $(ROCKSDB_PATH) shared_lib DEBUG_LEVEL=0
 
 $(LIBRARY): $(OBJS)
 	rm -rf $(OUTPUT)
@@ -35,7 +36,8 @@ $(LIBRARY): $(OBJS)
 	mkdir -p $(OUTPUT)/lib
 	rm -rf $@
 	ar -rcs $@ $(OBJS)
-	cp $(ROCKSDB_PATH)/librocksdb.a $(OUTPUT)/lib
+	# cp $(ROCKSDB_PATH)/librocksdb.a $(OUTPUT)/lib
+	cp $(ROCKSDB) $(OUTPUT)/lib
 	cp -r ./include/* $(OUTPUT)/include
 
 $(OBJS): %.o : %.cc

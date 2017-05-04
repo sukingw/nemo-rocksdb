@@ -5,13 +5,7 @@
 
 #include "db_nemo_impl.h"
 
-#include "db/filename.h"
-#include "db/write_batch_internal.h"
 #include "rocksdb/convenience.h"
-#include "rocksdb/env.h"
-#include "rocksdb/iterator.h"
-#include "rocksdb/utilities/db_ttl.h"
-#include "util/coding.h"
 
 namespace rocksdb {
 
@@ -195,16 +189,16 @@ Status DBNemoImpl::Put(const WriteOptions& options, ColumnFamilyHandle* column_f
 
 Status DBNemoImpl::Get(const ReadOptions& options,
     ColumnFamilyHandle* column_family, const Slice& key,
-    std::string* value) {
+	PinnableSlice* value) {
   Status st = db_->Get(options, column_family, key, value);
   if (!st.ok()) {
     return st;
   }
-  st = SanityCheckVersionAndTS(key, *value);
+  st = SanityCheckVersionAndTS(key, value->GetSelf()->data());
   if (!st.ok()) {
     return st;
   }
-  return StripVersionAndTS(value);
+  return StripVersionAndTS(value->GetSelf());
 }
 
 std::vector<Status> DBNemoImpl::MultiGet(
@@ -644,6 +638,10 @@ Status DBNemoImpl::GetKeyTTL(const ReadOptions& options, const Slice& key, int32
 Iterator* DBNemoImpl::NewIterator(const ReadOptions& opts,
                                      ColumnFamilyHandle* column_family) {
   return new NemoIterator(db_->NewIterator(opts, column_family), db_->GetEnv(), db_, meta_prefix_);
+}
+
+void DBNemoImpl::StopAllBackgroundWork(bool wait) {
+  CancelAllBackgroundWork(db_, wait);
 }
 
 Status DBNemoImpl::AppendVersionAndTS(const Slice& val, 
