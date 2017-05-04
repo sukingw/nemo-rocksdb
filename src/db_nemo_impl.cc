@@ -189,16 +189,16 @@ Status DBNemoImpl::Put(const WriteOptions& options, ColumnFamilyHandle* column_f
 
 Status DBNemoImpl::Get(const ReadOptions& options,
     ColumnFamilyHandle* column_family, const Slice& key,
-    std::string* value) {
+	PinnableSlice* value) {
   Status st = db_->Get(options, column_family, key, value);
   if (!st.ok()) {
     return st;
   }
-  st = SanityCheckVersionAndTS(key, *value);
+  st = SanityCheckVersionAndTS(key, value->GetSelf()->data());
   if (!st.ok()) {
     return st;
   }
-  return StripVersionAndTS(value);
+  return StripVersionAndTS(value->GetSelf());
 }
 
 std::vector<Status> DBNemoImpl::MultiGet(
