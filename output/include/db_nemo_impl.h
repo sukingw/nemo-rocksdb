@@ -128,7 +128,7 @@ class DBNemoImpl : public DBNemo {
 
   static Status StripTS(std::string* str);
 
-  static Status StripVersionAndTS(std::string* str);
+  static Status StripVersionAndTS(PinnableSlice* str);
 
 
   static const uint32_t kTSLength = sizeof(int32_t);  // size of timestamp
