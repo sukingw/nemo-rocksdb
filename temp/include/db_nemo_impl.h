@@ -55,7 +55,7 @@ class DBNemoImpl : public DBNemo {
   using StackableDB::Get;
   virtual Status Get(const ReadOptions& options,
                      ColumnFamilyHandle* column_family, const Slice& key,
-                     std::string* value) override;
+					 std::string* value) override;
 
   using StackableDB::MultiGet;
   virtual std::vector<Status> MultiGet(

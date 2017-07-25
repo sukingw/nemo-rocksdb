@@ -55,7 +55,7 @@ class DBNemoImpl : public DBNemo {
   using StackableDB::Get;
   virtual Status Get(const ReadOptions& options,
                      ColumnFamilyHandle* column_family, const Slice& key,
-                     std::string* value) override;
+					 PinnableSlice* value) override;
 
   using StackableDB::MultiGet;
   virtual std::vector<Status> MultiGet(
@@ -128,7 +128,7 @@ class DBNemoImpl : public DBNemo {
 
   static Status StripTS(std::string* str);
 
-  static Status StripVersionAndTS(std::string* str);
+  static Status StripVersionAndTS(PinnableSlice* str);
 
 
   static const uint32_t kTSLength = sizeof(int32_t);  // size of timestamp
